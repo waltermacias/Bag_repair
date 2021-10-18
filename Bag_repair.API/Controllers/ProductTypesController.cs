@@ -1,153 +1,141 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Bag_repair.API.Data;
+﻿using Bag_repair.API.Data;
 using Bag_repair.API.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace Bag_repair.API.Controllers
 {
-    public class ProductTypesController : Controller
-    {
-        private readonly DataContext _context;
+     public class ProductTypesController : Controller
+     {
+          private readonly DataContext _context;
 
-        public ProductTypesController(DataContext context)
-        {
-            _context = context;
-        }
+          public ProductTypesController(DataContext context)
+          {
+               _context = context;
+          }
 
-        // GET: ProductTypes
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.ProductTypes.ToListAsync());
-        }
+          // GET: ProductTypes
+          public async Task<IActionResult> Index()
+          {
+               return View(await _context.ProductTypes.ToListAsync());
+          }
 
-        // GET: ProductTypes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var productType = await _context.ProductTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (productType == null)
-            {
-                return NotFound();
-            }
+          // GET: ProductTypes/Create
+          public IActionResult Create()
+          {
+               return View();
+          }
 
-            return View(productType);
-        }
-
-        // GET: ProductTypes/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ProductTypes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description")] ProductType productType)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(productType);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(productType);
-        }
-
-        // GET: ProductTypes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var productType = await _context.ProductTypes.FindAsync(id);
-            if (productType == null)
-            {
-                return NotFound();
-            }
-            return View(productType);
-        }
-
-        // POST: ProductTypes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] ProductType productType)
-        {
-            if (id != productType.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(productType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductTypeExists(productType.Id))
+          // POST: ProductTypes/Create
+          // To protect from overposting attacks, enable the specific properties you want to bind to.
+          [HttpPost]
+          [ValidateAntiForgeryToken]
+          public async Task<IActionResult> Create(ProductType productType)
+          {
+               if (ModelState.IsValid)
+               {
+                    try
                     {
-                        return NotFound();
+                         _context.Add(productType);
+                         await _context.SaveChangesAsync();
+                         return RedirectToAction(nameof(Index));
                     }
-                    else
+                    catch (DbUpdateException dbUpdateException)
                     {
-                        throw;
+                         if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                         {
+                              ModelState.AddModelError(string.Empty, "El producto ya esta creado");
+                         }
+                         else
+                         {
+                              ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                         }
                     }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(productType);
-        }
+                    catch (Exception exeption)
+                    {
+                         ModelState.AddModelError(string.Empty, exeption.Message);
+                    }
+               }
 
-        // GET: ProductTypes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+               return View(productType);
+          }
 
-            var productType = await _context.ProductTypes
+          // GET: ProductTypes/Edit/5
+          public async Task<IActionResult> Edit(int? id)
+          {
+               if (id == null)
+               {
+                    return NotFound();
+               }
+
+               ProductType productType = await _context.ProductTypes.FindAsync(id);
+               if (productType == null)
+               {
+                    return NotFound();
+               }
+               return View(productType);
+          }
+
+          // POST: ProductTypes/Edit/5
+          // To protect from overposting attacks, enable the specific properties you want to bind to.
+
+          [HttpPost]
+          [ValidateAntiForgeryToken]
+          public async Task<IActionResult> Edit(int id, ProductType productType)
+          {
+               if (id != productType.Id)
+               {
+                    return NotFound();
+               }
+
+               if (ModelState.IsValid)
+               {
+                    try
+                    {
+                         _context.Update(productType);
+                         await _context.SaveChangesAsync();
+                         return RedirectToAction(nameof(Index));
+                    }
+                    catch (DbUpdateException dbUpdateException)
+                    {
+                         if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                         {
+                              ModelState.AddModelError(string.Empty, "El producto ya esta creado");
+                         }
+                         else
+                         {
+                              ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
+                         }
+                    }
+                    catch (Exception exeption)
+                    {
+                         ModelState.AddModelError(string.Empty, exeption.Message);
+                    }
+               }
+               return View(productType);
+          }
+
+          // GET: ProductTypes/Delete/5
+          public async Task<IActionResult> Delete(int? id)
+          {
+               if (id == null)
+               {
+                    return NotFound();
+               }
+
+               ProductType productType = await _context.ProductTypes
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (productType == null)
-            {
-                return NotFound();
-            }
+               if (productType == null)
+               {
+                    return NotFound();
+               }
 
-            return View(productType);
-        }
-
-        // POST: ProductTypes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var productType = await _context.ProductTypes.FindAsync(id);
-            _context.ProductTypes.Remove(productType);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProductTypeExists(int id)
-        {
-            return _context.ProductTypes.Any(e => e.Id == id);
-        }
-    }
+               _context.ProductTypes.Remove(productType);
+               await _context.SaveChangesAsync();
+               return RedirectToAction(nameof(Index));
+          }
+     }
 }
