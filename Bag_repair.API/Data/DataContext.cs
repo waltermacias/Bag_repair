@@ -9,15 +9,17 @@ namespace Bag_repair.API.Data
           {
           }
 
+          public DbSet<DocumentType> DocumentTypes { get; set; }
           public DbSet<Procedure> Procedures { get; set; }
-
           public DbSet<ProductType> ProductTypes { get; set; }
 
           protected override void OnModelCreating(ModelBuilder modelBuilder)
           {
                base.OnModelCreating(modelBuilder);
+               modelBuilder.Entity<DocumentType>().HasIndex(x => x.Description).IsUnique();
                modelBuilder.Entity<Procedure>().HasIndex(x => x.Description).IsUnique();
                modelBuilder.Entity<ProductType>().HasIndex(x => x.Description).IsUnique();
+
           }
 
      }
