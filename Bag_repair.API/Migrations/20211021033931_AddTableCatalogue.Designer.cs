@@ -3,14 +3,16 @@ using Bag_repair.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Bag_repair.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20211021033931_AddTableCatalogue")]
+    partial class AddTableCatalogue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,7 +37,7 @@ namespace Bag_repair.API.Migrations
                     b.HasIndex("Description")
                         .IsUnique();
 
-                    b.ToTable("Catalogues");
+                    b.ToTable("Catalogue");
                 });
 
             modelBuilder.Entity("Bag_repair.API.Data.Entities.DocumentType", b =>
@@ -102,7 +104,7 @@ namespace Bag_repair.API.Migrations
                     b.HasIndex("Description")
                         .IsUnique();
 
-                    b.ToTable("ProductTypes");
+                    b.ToTable("ProductType");
                 });
 #pragma warning restore 612, 618
         }

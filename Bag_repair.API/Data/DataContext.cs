@@ -8,7 +8,7 @@ namespace Bag_repair.API.Data
           public DataContext(DbContextOptions<DataContext> options) : base(options)
           {
           }
-
+          public DbSet<Catalogue> Catalogues { get; set; }
           public DbSet<DocumentType> DocumentTypes { get; set; }
           public DbSet<Procedure> Procedures { get; set; }
           public DbSet<ProductType> ProductTypes { get; set; }
@@ -16,6 +16,7 @@ namespace Bag_repair.API.Data
           protected override void OnModelCreating(ModelBuilder modelBuilder)
           {
                base.OnModelCreating(modelBuilder);
+               modelBuilder.Entity<Catalogue>().HasIndex(x => x.Description).IsUnique();
                modelBuilder.Entity<DocumentType>().HasIndex(x => x.Description).IsUnique();
                modelBuilder.Entity<Procedure>().HasIndex(x => x.Description).IsUnique();
                modelBuilder.Entity<ProductType>().HasIndex(x => x.Description).IsUnique();
